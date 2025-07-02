@@ -22,7 +22,7 @@ const url = `http://localhost:3333/actresses/`;
 function isActress(dati: unknown): dati is Actress {
 
   return (
-    typeof dati === 'object' && !dati == null &&
+    typeof dati === 'object' && dati !== null &&
     "id" in dati && typeof dati.id === 'number' &&
     "name" in dati && typeof dati.name === 'string' &&
     "birth_year" in dati && typeof dati.birth_year === 'number' &&
@@ -72,6 +72,26 @@ async function getAllActresses(): Promise<Actress[]> {
     return validActresses;
 
   } catch (error) {
+    if (error instanceof Error) {
+      console.error('Errore durante recupero dati attrice', error)
+    } else {
+      console.error('Errore sconosciuto', error);
+
+    }
+    return [];
+  }
+}
+
+
+// function milestone 5
+async function getActresses(ids: number[]): Promise<(Actress | null)[]> {
+  try {
+    const promises = ids.map(id => getActress(id));
+    const actresses = await Promise.all(promises)
+    return actresses
+  }
+
+  catch (error) {
     if (error instanceof Error) {
       console.error('Errore durante recupero dati attrice', error)
     } else {
